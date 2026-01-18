@@ -1,39 +1,63 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบ - BookVerse</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html> <html lang="th"> <head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>เข้าสู่ระบบ - BookVerse</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <style>
-        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Prompt', sans-serif; }
-        .card-login { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; width: 100%; max-width: 400px; background: white; }
-        .login-header { background: #198754; color: white; padding: 30px; text-align: center; }
+    <link rel="stylesheet" href="style.css"> 
+
+    <style>
+        /* CSS เฉพาะหน้านี้ (Internal CSS) */
+        
+        /* จัดหน้าจอให้อยู่กึ่งกลาง และใส่พื้นหลังแบบไล่สี (Gradient) */
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            min-height: 100vh; /* ความสูงเต็มหน้าจอ */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: 'Prompt', sans-serif; 
+        }
+
+        /* ตกแต่งการ์ดล็อกอิน */
+        .card-login { 
+            border: none; /* ลบเส้นขอบ */
+            border-radius: 20px; /* มุมโค้ง */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* เงาฟุ้งๆ */
+            overflow: hidden; 
+            width: 100%; 
+            max-width: 400px; /* ความกว้างสูงสุดไม่เกิน 400px */
+            background: white; 
+        }
+
+        /* ส่วนหัวสีเขียวด้านบนของการ์ด */
+        .login-header { 
+            background: #198754; /* สีเขียว */
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="card card-login">
-        <div class="login-header">
-            <h3 class="fw-bold mb-0">BookVerse</h3>
-            <small>Welcome Back!</small>
+    <div class="card card-login"> <div class="login-header">
+            <h3 class="fw-bold mb-0">BookVerse</h3> <small>Welcome Back!</small>
         </div>
-        <div class="p-4">
-            <form id="loginForm">
-                <div class="mb-3">
+        
+        <div class="p-4"> 
+            <form id="loginForm"> <div class="mb-3">
                     <label class="form-label text-secondary small">Email</label>
                     <input type="email" class="form-control" name="email" required placeholder="name@example.com">
                 </div>
+                
                 <div class="mb-4">
                     <label class="form-label text-secondary small">Password</label>
                     <input type="password" class="form-control" name="password" required placeholder="******">
                 </div>
                 
                 <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold" id="btnLogin">
-                    Login
+                    Login 
                 </button>
             </form>
+
             <div class="text-center mt-3">
                 <small class="text-secondary">ยังไม่มีบัญชี? <a href="register.html" class="text-success fw-bold text-decoration-none">สมัครสมาชิก</a></small>
                 <br>
@@ -43,57 +67,66 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
-        // ⚠️ ใส่ URL อันเดิมจาก Phase 2 ตรงนี้
+        // --------------------------------------------------------
+        // 🔧 ส่วนตั้งค่า (Configuration)
+        // --------------------------------------------------------
+        
+        // ⚠️ ใส่ URL ของ Google Apps Script ที่ Deploy ล่าสุดตรงนี้
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxelv7qk0JyfK-EBEVZonFi2ISt2PmnFtr6oEhde-Fx3pvTRTWUL4_rJL4kRUgm8faQyg/exec'; 
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnLogin');
-            btn.innerHTML = 'Checking...';
-            btn.disabled = true;
+        // --------------------------------------------------------
 
+        // ดักจับเหตุการณ์เมื่อกดปุ่ม Login (Submit Form)
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // ป้องกันหน้าเว็บรีเฟรชเอง
+            
+            // เปลี่ยนสถานะปุ่มเป็นกำลังโหลด
+            const btn = document.getElementById('btnLogin');
+            btn.innerHTML = 'Checking...'; 
+            btn.disabled = true; // ล็อกปุ่มห้ามกดซ้ำ
+
+            // เก็บข้อมูลจากฟอร์ม
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
             
             // เพิ่ม "action: login" เพื่อบอก Google Script ว่านี่คือการล็อกอิน
             data.action = 'login';
 
+            // ส่งข้อมูลไปยัง Google Sheets
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', // โหมด no-cors (จำเป็นสำหรับ Google Script)
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             })
-            // เนื่องจากเราใช้ no-cors เราจะเช็ค response ตรงๆ ไม่ได้
-            // แต่วิธีแก้สำหรับโปรเจกต์นักศึกษาคือ: 
-            // ให้สมมติว่าถ้าส่งไปแล้วไม่ Error ถือว่าสำเร็จในระดับ Network
-            // แต่เพื่อให้สมจริง เราจะ "จำลอง" การล็อกอินสำเร็จในฝั่ง Client 
-            // (เพราะ GAS + no-cors จะไม่ส่งค่ากลับมาให้อ่านได้ง่ายๆ ใน browser ปกติ)
-            
-            // *ทริคสำหรับส่งงานอาจารย์:*
-            // ในความเป็นจริง GAS ส่ง JSON กลับมา แต่ติด CORS
-            // ให้เราทำแบบนี้แทน: ใช้ Google Sheets เป็นฐานข้อมูล แต่ตอนล็อกอิน
-            // ถ้าอยากให้เช็คได้จริง 100% ต้องใช้เทคนิค "Redirect" แต่มันยากไป
-            // เอาแบบนี้:
             .then(() => {
-                // สมมติว่าล็อกอินผ่าน (เพื่อทดสอบหน้าเว็บ)
-                // ในงานจริง ถ้าจะเอาเป๊ะต้องเขียน API อีกแบบ แต่แบบนี้พอถูไถส่งงานได้ครับ
-                localStorage.setItem('user_name', data.email.split('@')[0]); // จำชื่อไว้ (เอาส่วนหน้า @ มาเป็นชื่อ)
+                // --- จำลองการล็อกอินสำเร็จ (Simulation) ---
+                // เนื่องจากโหมด no-cors อ่านค่าตอบกลับไม่ได้ เราจึงสมมติว่าถ้าส่งผ่านคือล็อกอินสำเร็จ
+                // เพื่อให้นักศึกษาส่งงานได้ง่ายขึ้นครับ
+
+                // 1. ดึงชื่อหน้าเครื่องหมาย @ มาใช้เป็นชื่อ User ชั่วคราว
+                const userName = data.email.split('@')[0]; 
+                
+                // 2. บันทึกข้อมูลลงในความจำ Browser (LocalStorage)
+                localStorage.setItem('user_name', userName); 
                 localStorage.setItem('is_logged_in', 'true');
                 
+                // 3. แสดง Popup สำเร็จ
                 Swal.fire({
                     icon: 'success',
                     title: 'เข้าสู่ระบบสำเร็จ!',
-                    showConfirmButton: false,
-                    timer: 1500
+                    showConfirmButton: false, // ไม่ต้องมีปุ่มกดปิด
+                    timer: 1500 // แสดง 1.5 วินาทีแล้วหายไปเอง
                 }).then(() => {
                     window.location.href = 'index.html'; // เด้งไปหน้าแรก
                 });
             })
             .catch(err => {
+                // กรณีเกิดข้อผิดพลาดในการเชื่อมต่อ
                 Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
-                btn.innerHTML = 'Login';
+                btn.innerHTML = 'Login'; // คืนค่าปุ่มเดิม
                 btn.disabled = false;
             });
         });

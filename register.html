@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สมัครสมาชิก - BookVerse</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html> <html lang="th"> <head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>สมัครสมาชิก - BookVerse</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     
@@ -14,24 +8,25 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* ปรับสีปฏิทิน Flatpickr ให้เป็นสีเขียว BookVerse */
+        /* ปรับแต่งสีปฏิทิน Flatpickr ให้เป็นสีเขียวธีม BookVerse */
         .flatpickr-day.selected, .flatpickr-day:hover {
             background: #198754 !important;
             border-color: #198754 !important;
         }
         
-        /* จัดกล่องสมัครสมาชิกให้อยู่ตรงกลาง */
+        /* จัดกล่องสมัครสมาชิกให้อยู่กึ่งกลางหน้าจอเสมอ */
         .register-container {
-            min-height: 80vh;
+            min-height: 80vh; /* ความสูงขั้นต่ำ 80% ของจอ */
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
+        /* ตกแต่งการ์ดฟอร์ม */
         .card-register {
             border: none;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* เงาจางๆ */
             overflow: hidden;
         }
     </style>
@@ -92,19 +87,23 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <script>
-        // --- 🟢 3. ตั้งค่า Flatpickr ---
-        // คำนวณวันย้อนหลังเพื่อกำหนดขอบเขตปฏิทิน
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> 
+    
+    <script>
+        // --- 🟢 3. ตั้งค่า Flatpickr (ตัวเลือกวันเกิด) ---
+        
         const today = new Date();
-        const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()); // ย้อนไป 18 ปี
-        const maxAgeDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate()); // ย้อนไป 60 ปี
+        // คำนวณวันย้อนหลังเพื่อกำหนดขอบเขตอายุที่รับได้
+        const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()); // ย้อนไป 18 ปี (อายุต่ำสุด)
+        const maxAgeDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate()); // ย้อนไป 60 ปี (อายุสูงสุด)
 
         flatpickr("#dobInput", {
-            dateFormat: "Y-m-d", // รูปแบบที่จะส่งไปเก็บ
-            altInput: true,      // รูปแบบที่จะโชว์ให้คนเห็น
+            dateFormat: "Y-m-d", // รูปแบบที่จะส่งไปเก็บใน Google Sheet
+            altInput: true,      // รูปแบบที่จะโชว์ให้คนเห็นในเว็บ
             altFormat: "j F Y",  // เช่น 18 January 2006
-            maxDate: minAgeDate, // ห้ามเลือกวันที่อายุน้อยกว่า 18
-            minDate: maxAgeDate, // ห้ามเลือกวันที่อายุเกิน 60
+            maxDate: minAgeDate, // ห้ามเลือกวันที่ทำให้อายุน้อยกว่า 18
+            minDate: maxAgeDate, // ห้ามเลือกวันที่ทำให้อายุเกิน 60
             disableMobile: "true", // บังคับใช้หน้าตาแบบ Desktop (สวยกว่าของมือถือ)
             
             // เมื่อเลือกวันเสร็จ ให้คำนวณอายุโชว์ทันที
@@ -113,10 +112,13 @@
                     const birthDate = selectedDates[0];
                     let age = today.getFullYear() - birthDate.getFullYear();
                     const m = today.getMonth() - birthDate.getMonth();
+                    
+                    // ปรับอายุให้เป๊ะถ้ายวดยังไม่ถึงวันเกิด
                     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
                         age--;
                     }
-                    // แสดงข้อความสีเขียว
+                    
+                    // แสดงข้อความสีเขียวว่าผ่านเกณฑ์
                     const feedback = document.getElementById('ageFeedback');
                     feedback.textContent = `อายุของคุณคือ ${age} ปี (สามารถสมัครได้ ✅)`;
                     feedback.style.color = '#198754';
@@ -125,15 +127,18 @@
         });
 
         // --- 4. ส่งข้อมูลไป Google Sheets ---
+        
         const form = document.getElementById('registerForm');
+        
         // ----------------------------------------------------
-        // ⚠️ เอา URL ที่ได้จากขั้นตอน Deploy มาใส่ตรงนี้ ⚠️
+        // ⚠️ เอา URL ที่ได้จากขั้นตอน Deploy Google Apps Script มาใส่ตรงนี้ ⚠️
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxelv7qk0JyfK-EBEVZonFi2ISt2PmnFtr6oEhde-Fx3pvTRTWUL4_rJL4kRUgm8faQyg/exec'; 
         // ----------------------------------------------------
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // ห้ามรีเฟรชหน้า
             
+            // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
             const btn = document.getElementById('btnSubmit');
             btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังบันทึก...';
             btn.disabled = true;
@@ -141,30 +146,31 @@
             // เก็บข้อมูลจากฟอร์ม
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
-            data.action = 'register';
+            data.action = 'register'; // ระบุว่าเป็นการสมัครสมาชิก
 
-            // ส่งข้อมูล
+            // ส่งข้อมูลด้วย fetch
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // สำคัญมาก
+                mode: 'no-cors', // สำคัญมากสำหรับการส่งไป Google Script
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             })
             .then(() => {
-                // สำเร็จ! แสดง Popup สวยๆ
+                // แจ้งเตือนสำเร็จ
                 Swal.fire({
                     icon: 'success',
                     title: 'สมัครสมาชิกสำเร็จ!',
                     text: 'ยินดีต้อนรับเข้าสู่ BookVerse',
                     confirmButtonColor: '#198754'
                 }).then(() => {
-                    form.reset();
-                    btn.innerHTML = 'Sign Up';
+                    form.reset(); // ล้างฟอร์ม
+                    btn.innerHTML = 'Sign Up'; // คืนค่าปุ่ม
                     btn.disabled = false;
-                    document.getElementById('ageFeedback').textContent = '';
+                    document.getElementById('ageFeedback').textContent = ''; // ล้างข้อความอายุ
                 });
             })
             .catch(error => {
+                // แจ้งเตือน Error
                 Swal.fire({
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด',

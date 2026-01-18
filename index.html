@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookVerse - ชุมชนนักอ่านและนักเขียน</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html> <html lang="th"> <head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>BookVerse - ชุมชนนักอ่านและนักเขียน</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -89,44 +83,46 @@
     
     <script>
         // --------------------------------------------------------
-        // 🔧 ส่วนตั้งค่า (แก้ไขตรงนี้)
+        // 🔧 ส่วนตั้งค่า (Configuration)
         // --------------------------------------------------------
         
-        // 1. วาง URL Google Apps Script ของคุณ
+        // 1. URL ของ Google Apps Script (Backend) ที่ Deploy ไว้
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxelv7qk0JyfK-EBEVZonFi2ISt2PmnFtr6oEhde-Fx3pvTRTWUL4_rJL4kRUgm8faQyg/exec'; 
 
-        // 2. ระบุ ID ของหนังสือที่จะโชว์ในหน้าแรก (ใส่เลข ID ที่ต้องการ)
-        // เช่น [1, 3] คือโชว์เฉพาะเล่ม ID 1 และ 3
+        // 2. ระบุ ID ของหนังสือที่จะโชว์ในหน้าแรก (ใส่เลข ID ที่ต้องการใน Array)
+        // ตัวอย่าง: [1, 2] คือโชว์เฉพาะเล่ม ID 1 และ ID 2
         const showBookIds = [1, 2]; 
 
         // --------------------------------------------------------
 
-        // ทำงานเมื่อโหลดหน้าเว็บ
+        // ทำงานทันทีเมื่อโหลดหน้าเว็บเสร็จ
         window.onload = function() {
-            checkLoginStatus(); // เช็ค Login
-            loadTrendingBooks(); // โหลดหนังสือแนะนำ
+            checkLoginStatus(); // 1. ตรวจสอบสถานะการล็อกอิน
+            loadTrendingBooks(); // 2. โหลดข้อมูลหนังสือแนะนำ
         };
 
-        // ฟังก์ชันโหลดหนังสือและกรองเฉพาะ ID ที่ต้องการ
+        // ฟังก์ชันโหลดหนังสือและกรองเฉพาะ ID ที่กำหนด
         function loadTrendingBooks() {
             const container = document.getElementById('trending-container');
             
+            // เรียกข้อมูลหนังสือทั้งหมดจาก Google Sheet
             fetch(SCRIPT_URL + '?action=getBooks')
-                .then(response => response.json())
+                .then(response => response.json()) // แปลงข้อมูลเป็น JSON
                 .then(allBooks => {
-                    // กรองเอาเฉพาะหนังสือที่มี ID ตรงกับใน showBookIds
-                    // ใช้ parseInt เพื่อแปลงเป็นตัวเลขให้ชัวร์ทั้งคู่
+                    // กรอง (Filter) เอาเฉพาะหนังสือที่มี ID ตรงกับในตัวแปร showBookIds
                     const trendingBooks = allBooks.filter(book => showBookIds.includes(parseInt(book.id)));
 
-                    container.innerHTML = ''; // ล้าง Loading ออก
+                    container.innerHTML = ''; // ล้างตัวโหลด Loading ออก
 
+                    // กรณีไม่เจอหนังสือที่ระบุ
                     if (trendingBooks.length === 0) {
                         container.innerHTML = '<div class="col-12 text-center text-muted">ไม่พบหนังสือแนะนำในขณะนี้</div>';
                         return;
                     }
 
-                    // สร้างการ์ดแสดงผล
+                    // วนลูปสร้างการ์ดหนังสือทีละเล่ม
                     trendingBooks.forEach(book => {
+                        // สร้าง HTML การ์ดหนังสือ
                         const cardHTML = `
                             <div class="col-md-3 col-6">
                                 <div class="card h-100 border-0 shadow-sm card-hover">
@@ -144,6 +140,7 @@
                                 </div>
                             </div>
                         `;
+                        // นำการ์ดที่สร้างไปใส่ใน Container
                         container.innerHTML += cardHTML;
                     });
                 })
@@ -153,30 +150,33 @@
                 });
         }
 
-        // ฟังก์ชันจัดการ Login (เหมือนเดิม)
+        // ฟังก์ชันตรวจสอบการล็อกอินและสลับเมนู (Toggle Menu)
         function checkLoginStatus() {
+            // อ่านค่าจาก LocalStorage
             const isLoggedIn = localStorage.getItem('is_logged_in');
             const userName = localStorage.getItem('user_name');
 
+            // อ้างอิง Element ในหน้าเว็บ
             const guestMenu = document.getElementById('guest-menu');
             const userMenu = document.getElementById('user-menu');
             const nameDisplay = document.getElementById('user-name-display');
 
+            // ตรวจสอบเงื่อนไข: ถ้าล็อกอินแล้วและมีชื่อผู้ใช้
             if (isLoggedIn === 'true' && userName) {
-                guestMenu.style.display = 'none';
-                userMenu.style.display = 'flex';
-                nameDisplay.textContent = userName;
+                guestMenu.style.display = 'none'; // ซ่อนเมนูคนทั่วไป
+                userMenu.style.display = 'flex';  // แสดงเมนูสมาชิก
+                nameDisplay.textContent = userName; // แสดงชื่อผู้ใช้
             } else {
-                guestMenu.style.display = 'flex';
-                userMenu.style.display = 'none';
+                guestMenu.style.display = 'flex'; // แสดงเมนูคนทั่วไป
+                userMenu.style.display = 'none';  // ซ่อนเมนูสมาชิก
             }
         }
 
-        // ฟังก์ชันออกจากระบบ
+        // ฟังก์ชันออกจากระบบ (Logout)
         function logout() {
-            localStorage.removeItem('is_logged_in');
-            localStorage.removeItem('user_name');
-            location.reload();
+            localStorage.removeItem('is_logged_in'); // ลบสถานะล็อกอิน
+            localStorage.removeItem('user_name');    // ลบชื่อผู้ใช้
+            location.reload(); // รีเฟรชหน้าเว็บใหม่
         }
     </script>
 </body>

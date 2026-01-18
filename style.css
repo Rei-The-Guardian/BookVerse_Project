@@ -1,0 +1,53 @@
+/* ใช้ฟอนต์ Prompt ทั้งเว็บ */
+body {
+    font-family: 'Prompt', sans-serif;
+    color: #333;
+    background-color: #f8f9fa; /* พื้นหลังสีเทาอ่อนมาก */
+}
+
+/* ปรับแต่ง Navbar */
+.navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #555 !important;
+    margin-right: 15px;
+}
+
+.nav-link.active, .nav-link:hover {
+    color: #198754 !important; /* สีเขียวเมื่อเอาเมาส์ชี้ */
+}
+
+/* เอฟเฟกต์การ์ดหนังสือ */
+.card-hover {
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px); /* ลอยขึ้นนิดหน่อย */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* ปรับสีปุ่มให้เขียวสวยแบบ BookVerse */
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+}
+
+.btn-outline-success {
+    color: #198754;
+    border-color: #198754;
+}
+
+.btn-outline-success:hover {
+    background-color: #198754;
+    color: white;
+}
